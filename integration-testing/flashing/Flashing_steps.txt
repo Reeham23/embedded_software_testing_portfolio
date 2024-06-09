@@ -1,0 +1,2 @@
+
+1.Flashing ECU with UniFlash Tool: Performed ECU flashing using the UniFlash tool. This involved connecting the XDS debugger to the ECU, configuring the ECU to flashing mode via switch settings, selecting the appropriate COM port for UART communication, and choosing the desired software to flash onto the ECU.

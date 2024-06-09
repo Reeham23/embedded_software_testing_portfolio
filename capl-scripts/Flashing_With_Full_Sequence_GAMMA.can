@@ -1,0 +1,83 @@
+Flashing APP SW with Full Sequence  
+// TesterName:Reham Eid
+
+variables {
+    message 0x700 msgRequest;  // Example message ID for request
+    message 0x701 msgResponse; // Example message ID for response
+    char flashData[256];       // Buffer for flash data
+    long currentAddress;       // Current address being flashed
+    dword flashBlockSize = 0x100; // Example block size for flashing
+    dword totalFlashSize = 0x10000; // Example total size to be flashed
+}
+
+on start {
+    write("Starting flashing process...");
+    currentAddress = 0x0000;  // Starting address for flashing
+    sendInitializationRequest();
+}
+
+on message 0x701 {
+    if (this == msgResponse) {
+        // Handle bootloader response
+        if (currentAddress < totalFlashSize) {
+            sendFlashData();
+        } else {
+            sendFinalizationRequest();
+            write("Flashing process completed.");
+        }
+    }
+}
+
+on timer tFlashData {
+    if (currentAddress < totalFlashSize) {
+        sendFlashData();
+    } else {
+        sendFinalizationRequest();
+        write("Flashing process completed.");
+    }
+}
+
+void sendInitializationRequest() {
+    // Initialize the bootloader communication
+    msgRequest.DLC = 8;
+    msgRequest.byte(0) = 0x10;  // Example initialization command
+    msgRequest.byte(1) = 0x01;  // Sub-command for bootloader mode
+    output(msgRequest);
+    write("Sent initialization request to bootloader.");
+}
+
+void sendFlashData() {
+    // Load the next block of flash data
+    // Here we just fill with dummy data for the example
+    for (int i = 0; i < flashBlockSize; i++) {
+        flashData[i] = (char)(currentAddress + i);
+    }
+
+    // Prepare and send the flash data message
+    msgRequest.DLC = 8;
+    msgRequest.byte(0) = 0x36; // Example command for flash data
+    msgRequest.byte(1) = (char)((currentAddress >> 16) & 0xFF);
+    msgRequest.byte(2) = (char)((currentAddress >> 8) & 0xFF);
+    msgRequest.byte(3) = (char)(currentAddress & 0xFF);
+    
+    // Copy data to message
+    for (int i = 0; i < 4; i++) {
+        msgRequest.byte(4 + i) = flashData[i];
+    }
+
+    output(msgRequest);
+    currentAddress += flashBlockSize;
+    write("Sent flash data to address: 0x" + format("%06X", currentAddress - flashBlockSize));
+
+    // Set timer for the next flash data send
+    setTimer(tFlashData, 100);  // Example delay of 100ms between blocks
+}
+
+void sendFinalizationRequest() {
+    // Finalize the flashing process
+    msgRequest.DLC = 8;
+    msgRequest.byte(0) = 0x37;  // Example finalization command
+    msgRequest.byte(1) = 0x00;  // Sub-command for end of flash
+    output(msgRequest);
+    write("Sent finalization request to bootloader.");
+}

@@ -1,0 +1,4 @@
+Example Debugging 
+1.CAPL Scripting and Package Validation: As a validation software tester, I debugged CAPL scripts and packages to determine whether issues originated from the scripting or the software itself. This involved thorough analysis and validation of the test scripts to ensure they were functioning as expected.
+
+2.Software Debugging Using XDS and Code Composer Studio: I utilized the XDS debugger and Code Composer Studio to debug the software code. This process included applying breakpoints and verifying that they were hit to ensure the software executed its intended functionalities correctly. This hands-on debugging ensured reliable software performance and pinpointed issues efficiently.

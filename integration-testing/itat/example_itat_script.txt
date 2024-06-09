@@ -1,0 +1,10 @@
+Example ITAT Script:
+Actions:
+1.Call CanExample(); in ECUH_StartInitoneCallout API 
+2.Build then Flash on ECU 
+
+Expectations:
+1.RX Message should appear only one Time 
+
+Reactions:
+1.Rx Message Received successfully!
